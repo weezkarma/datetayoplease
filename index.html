@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Makes the website work properly on phones -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Have a Date With Me?</title>
+
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-family: Arial, sans-serif;
+
+            background: linear-gradient(
+                135deg,
+                #ffd6e7,
+                #ffeef5,
+                #ffd6e7
+            );
+
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+
+            background: white;
+
+            padding: 35px;
+
+            border-radius: 25px;
+
+            text-align: center;
+
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            color: #e75480;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #e75480;
+        }
+
+        p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .heart {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            border: none;
+            border-radius: 12px;
+
+            padding: 13px 25px;
+
+            font-size: 16px;
+
+            cursor: pointer;
+
+            transition: 0.25s;
+        }
+
+        .yes-button {
+            background: #e75480;
+            color: white;
+        }
+
+        .yes-button:hover {
+            background: #d94370;
+            transform: scale(1.05);
+        }
+
+        .no-button {
+            background: #ddd;
+            color: #555;
+
+            position: relative;
+        }
+
+        /*
+        The NO button will move when clicked.
+        */
+        .no-button:hover {
+            transform: scale(0.95);
+        }
+
+        .button-container {
+            margin-top: 25px;
+
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+
+            min-height: 55px;
+        }
+
+        .date-options {
+            margin-top: 25px;
+        }
+
+        .date-button {
+            width: 100%;
+
+            margin: 8px 0;
+
+            background: #ffe1eb;
+
+            color: #c73565;
+        }
+
+        .date-button:hover {
+            background: #ffc8da;
+
+            transform: scale(1.02);
+        }
+
+        .form-section {
+            text-align: left;
+
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+
+            margin-top: 15px;
+            margin-bottom: 6px;
+
+            font-weight: bold;
+
+            color: #555;
+        }
+
+        input {
+            width: 100%;
+
+            padding: 12px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 9px;
+
+            font-size: 15px;
+
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #e75480;
+        }
+
+        .submit-button {
+            width: 100%;
+
+            margin-top: 25px;
+
+            background: #e75480;
+
+            color: white;
+        }
+
+        .submit-button:hover {
+            background: #d94370;
+        }
+
+        .back-button {
+            background: #eee;
+
+            color: #555;
+
+            margin-top: 10px;
+
+            width: 100%;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .success {
+            background: #fff0f5;
+
+            padding: 20px;
+
+            border-radius: 15px;
+
+            margin-top: 20px;
+
+            color: #c73565;
+        }
+
+        .success h2 {
+            margin-top: 0;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        @media (max-width: 500px) {
+
+            .container {
+                padding: 25px 20px;
+            }
+
+            h1 {
+                font-size: 27px;
+            }
+
+            .heart {
+                font-size: 50px;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+    <!-- ================================= -->
+    <!-- FIRST SCREEN -->
+    <!-- ================================= -->
+
+    <div id="questionScreen">
+
+        <div class="heart">
+            ❤️
+        </div>
+
+        <h1>
+            Have a Date With Me?
+        </h1>
+
+        <p>
+            Would you like to go on a date with me?
+        </p>
+
+
+        <div class="button-container" id="buttonContainer">
+
+            <button
+                class="yes-button"
+                onclick="showDateOptions()">
+
+                YES ❤️
+
+            </button>
+
+
+            <button
+                class="no-button"
+                id="noButton"
+                onclick="moveNoButton()">
+
+                NO
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================= -->
+    <!-- DATE OPTIONS -->
+    <!-- ================================= -->
+
+    <div id="dateOptionsScreen" class="hidden">
+
+        <div class="heart">
+            💕
+        </div>
+
+        <h1>
+            It's a Date! ❤️
+        </h1>
+
+        <p>
+            What kind of date would you like?
+        </p>
+
+
+        <div class="date-options">
+
+            <button
+                class="date-button"
+                onclick="showForm('restaurant')">
+
+                🍽️ Restaurant Date
+
+            </button>
+
+
+            <button
+                class="date-button"
+                onclick="showForm('beach')">
+
+                🏖️ Beach Date
+
+            </button>
+
+
+            <button
+                class="date-button"
+                onclick="showForm('cinema')">
+
+                🎬 Cinema Date
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================= -->
+    <!-- RESTAURANT FORM -->
+    <!-- ================================= -->
+
+    <div id="restaurantForm" class="hidden">
+
+        <h2>
+            🍽️ Restaurant Date
+        </h2>
+
+        <p>
+            Tell me where and when.
+        </p>
+
+
+        <div class="form-section">
+
+            <label>
+                Which restaurant?
+            </label>
+
+            <input
+                type="text"
+                id="restaurantName"
+                placeholder="Restaurant name"
+                required>
+
+
+            <label>
+                Date
+            </label>
+
+            <input
+                type="date"
+                id="restaurantDate"
+                required>
+
+
+            <label>
+                Time
+            </label>
+
+            <input
+                type="time"
+                id="restaurantTime"
+                required>
+
+
+            <button
+                class="submit-button"
+                onclick="goToEmail('Restaurant')">
+
+                Continue ❤️
+
+            </button>
+
+
+            <button
+                class="back-button"
+                onclick="backToOptions()">
+
+                ← Back
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================= -->
+    <!-- BEACH FORM -->
+    <!-- ================================= -->
+
+    <div id="beachForm" class="hidden">
+
+        <h2>
+            🏖️ Beach Date
+        </h2>
+
+        <p>
+            Tell me where and when.
+        </p>
+
+
+        <div class="form-section">
+
+            <label>
+                Which beach?
+            </label>
+
+            <input
+                type="text"
+                id="beachName"
+                placeholder="Beach name"
+                required>
+
+
+            <label>
+                Date
+            </label>
+
+            <input
+                type="date"
+                id="beachDate"
+                required>
+
+
+            <label>
+                Time
+            </label>
+
+            <input
+                type="time"
+                id="beachTime"
+                required>
+
+
+            <button
+                class="submit-button"
+                onclick="goToEmail('Beach')">
+
+                Continue ❤️
+
+            </button>
+
+
+            <button
+                class="back-button"
+                onclick="backToOptions()">
+
+                ← Back
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================= -->
+    <!-- CINEMA FORM -->
+    <!-- ================================= -->
+
+    <div id="cinemaForm" class="hidden">
+
+        <h2>
+            🎬 Cinema Date
+        </h2>
+
+        <p>
+            Tell me where and when.
+        </p>
+
+
+        <div class="form-section">
+
+            <label>
+                Which cinema branch?
+            </label>
+
+            <input
+                type="text"
+                id="cinemaName"
+                placeholder="Cinema branch"
+                required>
+
+
+            <label>
+                Date
+            </label>
+
+            <input
+                type="date"
+                id="cinemaDate"
+                required>
+
+
+            <label>
+                Time
+            </label>
+
+            <input
+                type="time"
+                id="cinemaTime"
+                required>
+
+
+            <button
+                class="submit-button"
+                onclick="goToEmail('Cinema')">
+
+                Continue ❤️
+
+            </button>
+
+
+            <button
+                class="back-button"
+                onclick="backToOptions()">
+
+                ← Back
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================= -->
+    <!-- EMAIL SCREEN -->
+    <!-- ================================= -->
+
+    <div id="emailScreen" class="hidden">
+
+        <div class="heart">
+            💌
+        </div>
+
+        <h1>
+            Almost Done! ❤️
+        </h1>
+
+        <p>
+            Enter your email and we'll send you
+            a copy of our date details.
+        </p>
+
+
+        <div class="form-section">
+
+            <label>
+                Your Email Address
+            </label>
+
+            <input
+                type="email"
+                id="userEmail"
+                placeholder="example@gmail.com"
+                required>
+
+
+            <button
+                class="submit-button"
+                onclick="sendEmail()">
+
+                Send My Date Details 💌
+
+            </button>
+
+
+            <button
+                class="back-button"
+                onclick="backToSelectedForm()">
+
+                ← Back
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================= -->
+    <!-- SUCCESS SCREEN -->
+    <!-- ================================= -->
+
+    <div id="successScreen" class="hidden">
+
+        <div class="heart">
+            💕
+        </div>
+
+        <h1>
+            It's Official! ❤️
+        </h1>
+
+        <div class="success">
+
+            <h2>
+                Date Confirmed!
+            </h2>
+
+            <p id="confirmationText"></p>
+
+            <p>
+                A copy of the date details has been
+                sent to your email. 💌
+            </p>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/*
+==================================================
+EMAILJS SETUP
+==================================================
+
+Replace the three values below with your
+EmailJS information.
+
+PUBLIC KEY
+SERVICE ID
+TEMPLATE ID
+==================================================
+*/
+
+
+const EMAILJS_PUBLIC_KEY = "HjnP5RIKTd4X8UiJW";
+
+const EMAILJS_SERVICE_ID = "service_lu9e0pt";
+
+const EMAILJS_TEMPLATE_ID = "template_xni8ufq";
+
+
+/*
+Initialize EmailJS
+*/
+
+emailjs.init({
+
+    publicKey: EMAILJS_PUBLIC_KEY
+
+});
+
+
+
+/*
+==================================================
+VARIABLES
+==================================================
+*/
+
+
+let selectedDateType = "";
+
+let selectedPlace = "";
+
+let selectedDate = "";
+
+let selectedTime = "";
+
+
+
+/*
+==================================================
+MOVE NO BUTTON
+==================================================
+*/
+
+function moveNoButton() {
+
+    const noButton =
+        document.getElementById("noButton");
+
+
+    /*
+    Generate random position
+    */
+
+    const randomX =
+        Math.floor(Math.random() * 200) - 100;
+
+    const randomY =
+        Math.floor(Math.random() * 150) - 75;
+
+
+    noButton.style.transform =
+        `translate(${randomX}px, ${randomY}px)`;
+
+}
+
+
+
+/*
+==================================================
+SHOW DATE OPTIONS
+==================================================
+*/
+
+function showDateOptions() {
+
+    document
+        .getElementById("questionScreen")
+        .classList.add("hidden");
+
+
+    document
+        .getElementById("dateOptionsScreen")
+        .classList.remove("hidden");
+
+}
+
+
+
+/*
+==================================================
+SHOW SELECTED FORM
+==================================================
+*/
+
+function showForm(type) {
+
+    /*
+    Hide everything first
+    */
+
+    document
+        .getElementById("dateOptionsScreen")
+        .classList.add("hidden");
+
+    document
+        .getElementById("restaurantForm")
+        .classList.add("hidden");
+
+    document
+        .getElementById("beachForm")
+        .classList.add("hidden");
+
+    document
+        .getElementById("cinemaForm")
+        .classList.add("hidden");
+
+
+    /*
+    Show selected form
+    */
+
+    if (type === "restaurant") {
+
+        document
+            .getElementById("restaurantForm")
+            .classList.remove("hidden");
+
+    }
+
+
+    if (type === "beach") {
+
+        document
+            .getElementById("beachForm")
+            .classList.remove("hidden");
+
+    }
+
+
+    if (type === "cinema") {
+
+        document
+            .getElementById("cinemaForm")
+            .classList.remove("hidden");
+
+    }
+
+}
+
+
+
+/*
+==================================================
+GO TO EMAIL SCREEN
+==================================================
+*/
+
+function goToEmail(type) {
+
+    selectedDateType = type;
+
+
+    /*
+    Get restaurant information
+    */
+
+    if (type === "Restaurant") {
+
+        selectedPlace =
+            document
+            .getElementById("restaurantName")
+            .value;
+
+        selectedDate =
+            document
+            .getElementById("restaurantDate")
+            .value;
+
+        selectedTime =
+            document
+            .getElementById("restaurantTime")
+            .value;
+
+    }
+
+
+    /*
+    Get beach information
+    */
+
+    if (type === "Beach") {
+
+        selectedPlace =
+            document
+            .getElementById("beachName")
+            .value;
+
+        selectedDate =
+            document
+            .getElementById("beachDate")
+            .value;
+
+        selectedTime =
+            document
+            .getElementById("beachTime")
+            .value;
+
+    }
+
+
+    /*
+    Get cinema information
+    */
+
+    if (type === "Cinema") {
+
+        selectedPlace =
+            document
+            .getElementById("cinemaName")
+            .value;
+
+        selectedDate =
+            document
+            .getElementById("cinemaDate")
+            .value;
+
+        selectedTime =
+            document
+            .getElementById("cinemaTime")
+            .value;
+
+    }
+
+
+    /*
+    Check that all fields are filled
+    */
+
+    if (
+        selectedPlace === "" ||
+        selectedDate === "" ||
+        selectedTime === ""
+    ) {
+
+        alert(
+            "Please complete all the date details first."
+        );
+
+        return;
+
+    }
+
+
+    /*
+    Hide forms
+    */
+
+    document
+        .getElementById("restaurantForm")
+        .classList.add("hidden");
+
+    document
+        .getElementById("beachForm")
+        .classList.add("hidden");
+
+    document
+        .getElementById("cinemaForm")
+        .classList.add("hidden");
+
+
+    /*
+    Show email screen
+    */
+
+    document
+        .getElementById("emailScreen")
+        .classList.remove("hidden");
+
+}
+
+
+
+/*
+==================================================
+SEND EMAIL
+==================================================
+*/
+
+function sendEmail() {
+
+    const email =
+        document
+        .getElementById("userEmail")
+        .value;
+
+
+    /*
+    Check email
+    */
+
+    if (email === "") {
+
+        alert(
+            "Please enter your email address."
+        );
+
+        return;
+
+    }
+
+
+    /*
+    Basic email validation
+    */
+
+    if (!email.includes("@")) {
+
+        alert(
+            "Please enter a valid email address."
+        );
+
+        return;
+
+    }
+
+
+    /*
+    Email parameters
+
+    These names must match the variables
+    you create in your EmailJS template.
+    */
+
+    const templateParams = {
+
+        to_email: email,
+
+        date_type: selectedDateType,
+
+        place: selectedPlace,
+
+        date: selectedDate,
+
+        time: selectedTime
+
+    };
+
+
+    /*
+    Send email using EmailJS
+    */
+
+    emailjs
+        .send(
+            EMAILJS_SERVICE_ID,
+            EMAILJS_TEMPLATE_ID,
+            templateParams
+        )
+
+        .then(function(response) {
+
+            console.log(
+                "Email sent successfully!",
+                response.status,
+                response.text
+            );
+
+
+            /*
+            Hide email screen
+            */
+
+            document
+                .getElementById("emailScreen")
+                .classList.add("hidden");
+
+
+            /*
+            Create confirmation message
+            */
+
+            document
+                .getElementById("confirmationText")
+                .innerHTML =
+
+                "Our " +
+                selectedDateType +
+                " is planned at <strong>" +
+                selectedPlace +
+                "</strong> on <strong>" +
+                selectedDate +
+                "</strong> at <strong>" +
+                selectedTime +
+                "</strong>. 💕";
+
+
+            /*
+            Show success screen
+            */
+
+            document
+                .getElementById("successScreen")
+                .classList.remove("hidden");
+
+        })
+
+        .catch(function(error) {
+
+            console.error(
+                "Email failed:",
+                error
+            );
+
+
+            alert(
+                "The email could not be sent. " +
+                "Please check your EmailJS settings."
+            );
+
+        });
+
+}
+
+
+
+/*
+==================================================
+BACK TO OPTIONS
+==================================================
+*/
+
+function backToOptions() {
+
+    document
+        .getElementById("restaurantForm")
+        .classList.add("hidden");
+
+    document
+        .getElementById("beachForm")
+        .classList.add("hidden");
+
+    document
+        .getElementById("cinemaForm")
+        .classList.add("hidden");
+
+
+    document
+        .getElementById("dateOptionsScreen")
+        .classList.remove("hidden");
+
+}
+
+
+
+/*
+==================================================
+BACK TO SELECTED FORM
+==================================================
+*/
+
+function backToSelectedForm() {
+
+    document
+        .getElementById("emailScreen")
+        .classList.add("hidden");
+
+
+    if (selectedDateType === "Restaurant") {
+
+        document
+            .getElementById("restaurantForm")
+            .classList.remove("hidden");
+
+    }
+
+
+    if (selectedDateType === "Beach") {
+
+        document
+            .getElementById("beachForm")
+            .classList.remove("hidden");
+
+    }
+
+
+    if (selectedDateType === "Cinema") {
+
+        document
+            .getElementById("cinemaForm")
+            .classList.remove("hidden");
+
+    }
+
+}
+
+</script>
+
+</body>
+
+</html>
